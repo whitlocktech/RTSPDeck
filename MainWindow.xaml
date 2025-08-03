@@ -3,10 +3,37 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RTSPDeck"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="RTSPDeck" Height="600" Width="1000"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}">
 
-    </Grid>
+    <DockPanel LastChildFill="True">
+        <!-- Top Toolbar -->
+        <StackPanel Orientation="Horizontal"
+                    DockPanel.Dock="Top"
+                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Margin="0,0,0,5">
+            <Button Content="Manage Cameras"
+                    Margin="5"
+                    Padding="6,2"
+                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                    Click="OpenManageCameras_Click"/>
+
+            <Button Content="Refresh Feeds"
+                    Margin="5"
+                    Padding="6,2"
+                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                    Click="RefreshFeeds_Click"/>
+        </StackPanel>
+
+        <!-- Camera Feed Grid -->
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                      Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+            <UniformGrid x:Name="VideoGrid"/>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

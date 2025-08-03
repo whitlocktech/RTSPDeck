@@ -1,0 +1,69 @@
+﻿<Window x:Class="RTSPDeck.ManageCamerasWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Manage Camera Feeds"
+        Height="450"
+        Width="800"
+        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}">
+
+    <DockPanel>
+        <!-- Top Buttons -->
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="10"
+                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+            <Button Content="Save"
+                    Width="100"
+                    Margin="5"
+                    Padding="6,2"
+                    Click="SaveButton_Click"
+                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+
+            <Button Content="Cancel"
+                    Width="100"
+                    Margin="5"
+                    Padding="6,2"
+                    Click="CancelButton_Click"
+                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        </StackPanel>
+
+        <!-- DataGrid -->
+        <DataGrid x:Name="CameraList"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="True"
+                  Margin="10"
+                  ItemsSource="{Binding CameraFeeds}"
+                  Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+                  Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                  RowBackground="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                  AlternatingRowBackground="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                  GridLinesVisibility="Vertical">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*" />
+                <DataGridTextColumn Header="Password" Binding="{Binding Password}" Width="*" />
+                <DataGridTextColumn Header="IP Address" Binding="{Binding IPAddress}" Width="*" />
+                <DataGridTextColumn Header="Port" Binding="{Binding Port}" Width="*" />
+                <DataGridTextColumn Header="Camera Number" Binding="{Binding CameraNumber}" Width="*" />
+                <DataGridTemplateColumn Header="Actions" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete"
+                                    Click="DeleteButton_Click"
+                                    Margin="5"
+                                    Padding="3,1"
+                                    HorizontalAlignment="Center"
+                                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+                                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>
