@@ -17,21 +17,42 @@ namespace RTSPDeck.Services
         // Dynamically determine the best config directory at runtime
         private static string GetConfigDirectory()
         {
-            string appDataDir = !string.IsNullOrEmpty(AppDataPath) ? Path.Combine(AppDataPath, CompanyName, AppName) : null;
-            if (IsDirectoryWritable(appDataDir))
-                return appDataDir;
+            if (!string.IsNullOrEmpty(AppDataPath))
+            {
+                var appDataDir = Path.Combine(AppDataPath, CompanyName, AppName);
+                if (IsDirectoryWritable(appDataDir))
+                    return appDataDir;
+            }
 
-            string localAppDataDir = !string.IsNullOrEmpty(LocalAppDataPath) ? Path.Combine(LocalAppDataPath, CompanyName, AppName) : null;
-            if (IsDirectoryWritable(localAppDataDir))
-                return localAppDataDir;
+            if (!string.IsNullOrEmpty(LocalAppDataPath))
+            {
+                var localAppDataDir = Path.Combine(LocalAppDataPath, CompanyName, AppName);
+                if (IsDirectoryWritable(localAppDataDir))
+                    return localAppDataDir;
+            }
 
             // Fallback: use current directory
             return Directory.GetCurrentDirectory();
         }
 
+        private static bool IsDirectoryWritable(string path)
+        {
+            try
+            {
+                string testFile = Path.Combine(path, Path.GetRandomFileName());
+                using FileStream fs = File.Create(testFile, 1, FileOptions.DeleteOnClose);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private static string ConfigDirectory => GetConfigDirectory();
 
         private static string ConfigPath => Path.Combine(ConfigDirectory, "config.json");
+
         public static List<CameraFeed> LoadFeeds()
         {
             try
@@ -49,7 +70,6 @@ namespace RTSPDeck.Services
             }
             catch (Exception ex)
             {
-                // Optional: log the error or alert the user
                 Console.WriteLine($"Error loading config: {ex.Message}");
                 return new List<CameraFeed>();
             }
@@ -66,7 +86,6 @@ namespace RTSPDeck.Services
             }
             catch (Exception ex)
             {
-                // Optional: log the error or alert the user
                 Console.WriteLine($"Error saving config: {ex.Message}");
             }
         }
