@@ -35,6 +35,14 @@ namespace RTSPDeck
             _cameraManager = new CameraManager();
 
             LoadCameraFeeds();
+
+            // Auto-start checkbox state sync
+            if (AutoStartCheckBox != null)
+            {
+                AutoStartCheckBox.IsChecked = AutoStartService.IsAutoStartEnabled();
+                AutoStartCheckBox.Checked += (s, e) => AutoStartService.EnableAutoStart();
+                AutoStartCheckBox.Unchecked += (s, e) => AutoStartService.DisableAutoStart();
+            }
         }
 
         private void LoadCameraFeeds()
@@ -79,14 +87,12 @@ namespace RTSPDeck
                     Margin = new Thickness(5)
                 };
 
-                // Safely start playback once view is loaded
                 videoView.Loaded += (_, __) =>
                 {
                     Console.WriteLine($"Starting stream for: {feed.Name} -> {rtspUrl}");
                     mediaPlayer.Play(media);
                 };
 
-                // Clean up on unload (optional, for memory safety)
                 videoView.Unloaded += (_, __) =>
                 {
                     mediaPlayer.Stop();
@@ -97,6 +103,5 @@ namespace RTSPDeck
                 VideoGrid.Children.Add(videoView);
             }
         }
-
     }
 }

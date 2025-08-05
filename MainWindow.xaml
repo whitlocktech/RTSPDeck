@@ -14,18 +14,24 @@
     <DockPanel LastChildFill="True">
         <!-- Top Toolbar -->
         <StackPanel Orientation="Horizontal"
-                    DockPanel.Dock="Top"
-                    Background="{DynamicResource MaterialDesignToolBarBackground}"
-                    Margin="0,0,0,5">
+            DockPanel.Dock="Top"
+            Background="{DynamicResource MaterialDesignToolBarBackground}"
+            Margin="0,0,0,5">
             <Button Content="Manage Cameras"
-                    Margin="5"
-                    Padding="6,2"
-                    Click="OpenManageCameras_Click"/>
-
+            Margin="5"
+            Padding="6,2"
+            Click="OpenManageCameras_Click"/>
             <Button Content="Refresh Feeds"
-                    Margin="5"
-                    Click="RefreshFeeds_Click"/>
+            Margin="5"
+            Click="RefreshFeeds_Click"/>
+            <CheckBox x:Name="AutoStartCheckBox"
+              Content="Start with Windows"
+              Margin="10,0,0,0"
+              VerticalAlignment="Center"
+              Style="{StaticResource MaterialDesignCheckBox}"
+              IsChecked="{Binding IsAutoStartEnabled, Mode=TwoWay}" />
         </StackPanel>
+
 
         <!-- Camera Feed Grid -->
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
