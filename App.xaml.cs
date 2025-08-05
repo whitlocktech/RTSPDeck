@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using Microsoft.Win32;
+using MaterialDesignThemes.Wpf;
+using MaterialDesignColors;
 
 namespace RTSPDeck
 {
@@ -10,28 +12,29 @@ namespace RTSPDeck
         {
             base.OnStartup(e);
 
-            bool isDarkTheme = IsDarkThemeEnabled();
-            var themeDict = new ResourceDictionary
-            {
-                Source = new Uri($"Themes/{(isDarkTheme ? "Dark" : "Light")}.xaml", UriKind.Relative)
-            };
-            Resources.MergedDictionaries.Add(themeDict);
+            bool isDark = IsSystemInDarkMode();
+
+            var theme = Theme.Create(
+                isDark ? BaseTheme.Dark : BaseTheme.Light,
+                primary: SwatchHelper.Lookup[MaterialDesignColor.DeepPurple],
+                secondary: SwatchHelper.Lookup[MaterialDesignColor.Lime]
+            );
+
+            new PaletteHelper().SetTheme(theme);
         }
 
-        private bool IsDarkThemeEnabled()
+        private bool IsSystemInDarkMode()
         {
             try
             {
                 using var key = Registry.CurrentUser.OpenSubKey(
                     @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
-                if (key != null)
-                {
-                    var value = key.GetValue("AppsUseLightTheme");
-                    return value is int intValue && intValue == 0;
-                }
+                return key?.GetValue("AppsUseLightTheme") is int value && value == 0;
             }
-            catch { }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
     }
 }

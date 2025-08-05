@@ -71,9 +71,7 @@ namespace RTSPDeck
                 };
 
                 string rtspUrl = $"rtsp://{feed.Username}:{feed.Password}@{feed.IPAddress}:{feed.Port}/Streaming/Channels/{feed.CameraNumber}01";
-
                 var media = new Media(_libVLC, rtspUrl, FromType.FromLocation);
-                mediaPlayer.Play(media);
 
                 var videoView = new LibVLCSharp.WPF.VideoView
                 {
@@ -81,8 +79,24 @@ namespace RTSPDeck
                     Margin = new Thickness(5)
                 };
 
+                // Safely start playback once view is loaded
+                videoView.Loaded += (_, __) =>
+                {
+                    Console.WriteLine($"Starting stream for: {feed.Name} -> {rtspUrl}");
+                    mediaPlayer.Play(media);
+                };
+
+                // Clean up on unload (optional, for memory safety)
+                videoView.Unloaded += (_, __) =>
+                {
+                    mediaPlayer.Stop();
+                    mediaPlayer.Dispose();
+                    media.Dispose();
+                };
+
                 VideoGrid.Children.Add(videoView);
             }
         }
+
     }
 }
