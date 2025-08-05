@@ -34,7 +34,7 @@ LicenseFile=C:\Users\colby\Documents\code_projects\RTSPDeck\LICENSE
 PrivilegesRequired=admin
 OutputDir=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\Installer
 OutputBaseFilename=RTSPDeck-Installer-x64
-SetupIconFile=C:\Users\colby\Documents\code_projects\Network Diagnostics Tool\Network Diagnostics Tool Icon.ico
+SetupIconFile=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck Icon.ico
 SolidCompression=yes
 WizardStyle=modern
 
