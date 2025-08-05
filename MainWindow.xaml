@@ -4,35 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="RTSPDeck" Height="600" Width="1000"
-        Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-        Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}">
+        Title="RTSPDeck"
+        Height="600" Width="1000"
+        Background="{DynamicResource MaterialDesignPaper}"
+        Foreground="{DynamicResource MaterialDesignBody}">
 
     <DockPanel LastChildFill="True">
         <!-- Top Toolbar -->
         <StackPanel Orientation="Horizontal"
                     DockPanel.Dock="Top"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Background="{DynamicResource MaterialDesignToolBarBackground}"
                     Margin="0,0,0,5">
             <Button Content="Manage Cameras"
                     Margin="5"
                     Padding="6,2"
-                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
                     Click="OpenManageCameras_Click"/>
 
             <Button Content="Refresh Feeds"
                     Margin="5"
-                    Padding="6,2"
-                    Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
-                    Background="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
                     Click="RefreshFeeds_Click"/>
         </StackPanel>
 
         <!-- Camera Feed Grid -->
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                      Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      Background="{DynamicResource MaterialDesignPaper}">
             <UniformGrid x:Name="VideoGrid"/>
         </ScrollViewer>
     </DockPanel>
