@@ -14,13 +14,24 @@ namespace RTSPDeck.Services
         private static readonly string AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         private static readonly string LocalAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-        private static readonly string ConfigDirectory =
-            !string.IsNullOrEmpty(AppDataPath)
-                ? Path.Combine(AppDataPath, CompanyName, AppName)
-                : Path.Combine(LocalAppDataPath, CompanyName, AppName);
+        // Dynamically determine the best config directory at runtime
+        private static string GetConfigDirectory()
+        {
+            string appDataDir = !string.IsNullOrEmpty(AppDataPath) ? Path.Combine(AppDataPath, CompanyName, AppName) : null;
+            if (IsDirectoryWritable(appDataDir))
+                return appDataDir;
 
-        private static readonly string ConfigPath = Path.Combine(ConfigDirectory, "config.json");
+            string localAppDataDir = !string.IsNullOrEmpty(LocalAppDataPath) ? Path.Combine(LocalAppDataPath, CompanyName, AppName) : null;
+            if (IsDirectoryWritable(localAppDataDir))
+                return localAppDataDir;
 
+            // Fallback: use current directory
+            return Directory.GetCurrentDirectory();
+        }
+
+        private static string ConfigDirectory => GetConfigDirectory();
+
+        private static string ConfigPath => Path.Combine(ConfigDirectory, "config.json");
         public static List<CameraFeed> LoadFeeds()
         {
             try
