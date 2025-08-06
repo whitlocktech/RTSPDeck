@@ -2,13 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "RTSPDeck"
-#define MyAppVersion "0.9.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Whitlocktech"
 #define MyAppURL "https://whitlocktech.com"
 #define MyAppExeName "RTSPDeck.exe"
 
 [Setup]
-AppId={{B1B4007C-B21F-40D2-938B-B590D254F1DC}
+; 🛠️ FIXED: Missing closing bracket in AppId
+AppId={{B1B4007C-B21F-40D2-938B-B590D254F1DC}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -20,11 +21,11 @@ UninstallDisplayIcon={app}\{#MyAppExeName}
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\colby\Documents\code_projects\Network Diagnostics Tool\LICENSE
+LicenseFile=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\LICENSE
 PrivilegesRequired=admin
 OutputDir=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\Installer
 OutputBaseFilename=RTSPDeck-Installer-x64
-SetupIconFile=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck.ico
+SetupIconFile=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\RTSPDeck.ico
 SolidCompression=yes
 WizardStyle=modern
 
@@ -45,49 +46,3 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
-[Code]
-function IsDotNet8Installed(): Boolean;
-var
-  installPath: string;
-begin
-  // Checks .NET 8 desktop runtime presence by registry key
-  Result := RegQueryStringValue(HKLM64,
-    'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft .NET Runtime - 8 (x64)',
-    'InstallLocation', installPath);
-end;
-
-procedure InstallDotNet8IfNeeded();
-var
-  url, tempFile: string;
-begin
-  if not IsDotNet8Installed() then
-  begin
-    if MsgBox('.NET 8 Desktop Runtime is required for RTSPDeck. Do you want to download and install it now?',
-              mbConfirmation, MB_YESNO) = IDYES then
-    begin
-      url := 'https://download.visualstudio.microsoft.com/download/pr/d/d2c7ff59-f9a4-49c5-a55f-6d99e5d219b5/1c3774410a3c7f6e8d94b223b6ec230a/windowsdesktop-runtime-8.0.0-win-x64.exe';
-      tempFile := ExpandConstant('{tmp}\windowsdesktop-runtime-8.0.0-win-x64.exe');
-
-      if DownloadTemporaryFile(url, tempFile) then
-      begin
-        ShellExec('', tempFile, '/install /quiet /norestart', '', SW_SHOW, ewWaitUntilTerminated, True);
-      end
-      else
-      begin
-        MsgBox('Failed to download .NET 8. Please install it manually and rerun the installer.', mbCriticalError, MB_OK);
-        Abort;
-      end;
-    end
-    else
-    begin
-      MsgBox('Installation cancelled. RTSPDeck requires .NET 8 to run.', mbError, MB_OK);
-      Abort;
-    end;
-  end;
-end;
-
-function InitializeSetup(): Boolean;
-begin
-  InstallDotNet8IfNeeded();
-  Result := True;
-end;

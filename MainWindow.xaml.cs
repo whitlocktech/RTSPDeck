@@ -15,14 +15,14 @@ namespace RTSPDeck
         private void OpenManageCameras_Click(object sender, RoutedEventArgs e)
         {
             var manageWindow = new ManageCamerasWindow();
-            manageWindow.ShowDialog(); // Wait for it to close
-            _cameraManager = new CameraManager(); // Reload the feeds
+            manageWindow.ShowDialog();
+            _cameraManager = new CameraManager();
             LoadCameraFeeds();
         }
 
         private void RefreshFeeds_Click(object sender, RoutedEventArgs e)
         {
-            _cameraManager = new CameraManager(); // Reload data
+            _cameraManager = new CameraManager();
             LoadCameraFeeds();
         }
 
@@ -30,18 +30,17 @@ namespace RTSPDeck
         {
             InitializeComponent();
 
-            Core.Initialize(); // Initialize VLC
+            Core.Initialize();
             _libVLC = new LibVLC();
             _cameraManager = new CameraManager();
 
             LoadCameraFeeds();
 
-            // Auto-start checkbox state sync
             if (AutoStartCheckBox != null)
             {
                 AutoStartCheckBox.IsChecked = AutoStartService.IsAutoStartEnabled();
-                AutoStartCheckBox.Checked += (s, e) => AutoStartService.EnableAutoStart();
-                AutoStartCheckBox.Unchecked += (s, e) => AutoStartService.DisableAutoStart();
+                AutoStartCheckBox.Checked += (_, __) => AutoStartService.EnableAutoStart();
+                AutoStartCheckBox.Unchecked += (_, __) => AutoStartService.DisableAutoStart();
             }
         }
 
@@ -73,11 +72,6 @@ namespace RTSPDeck
                     MessageBox.Show($"Playback error for feed: {feed.Name}");
                 };
 
-                mediaPlayer.Playing += (s, e) =>
-                {
-                    Console.WriteLine($"Feed '{feed.Name}' is playing.");
-                };
-
                 string rtspUrl = $"rtsp://{feed.Username}:{feed.Password}@{feed.IPAddress}:{feed.Port}/Streaming/Channels/{feed.CameraNumber}01";
                 var media = new Media(_libVLC, rtspUrl, FromType.FromLocation);
 
@@ -87,11 +81,7 @@ namespace RTSPDeck
                     Margin = new Thickness(5)
                 };
 
-                videoView.Loaded += (_, __) =>
-                {
-                    Console.WriteLine($"Starting stream for: {feed.Name} -> {rtspUrl}");
-                    mediaPlayer.Play(media);
-                };
+                videoView.Loaded += (_, __) => mediaPlayer.Play(media);
 
                 videoView.Unloaded += (_, __) =>
                 {
