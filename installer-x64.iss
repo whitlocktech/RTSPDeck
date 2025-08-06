@@ -8,33 +8,23 @@
 #define MyAppExeName "RTSPDeck.exe"
 
 [Setup]
-; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
-; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{B1B4007C-B21F-40D2-938B-B590D254F1DC}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
-; "ArchitecturesAllowed=x64compatible" specifies that Setup cannot run
-; on anything but x64 and Windows 11 on Arm.
 ArchitecturesAllowed=x64compatible
-; "ArchitecturesInstallIn64BitMode=x64compatible" requests that the
-; install be done in "64-bit mode" on x64 or Windows 11 on Arm,
-; meaning it should use the native 64-bit Program Files directory and
-; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
 LicenseFile=C:\Users\colby\Documents\code_projects\Network Diagnostics Tool\LICENSE
-; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=admin
 OutputDir=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\Installer
 OutputBaseFilename=RTSPDeck-Installer-x64
-SetupIconFile=C:\Users\colby\Documents\code_projects\Network Diagnostics Tool\Network Diagnostics Tool Icon.ico
+SetupIconFile=C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck.ico
 SolidCompression=yes
 WizardStyle=modern
 
@@ -47,7 +37,6 @@ Name: "startwithwindows"; Description: "Start RTSPDeck when Windows starts"; Gro
 
 [Files]
 Source: "C:\Users\colby\Documents\code_projects\RTSPDeck\RTSPDeck\bin\x64\Release\net8.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -56,3 +45,49 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Code]
+function IsDotNet8Installed(): Boolean;
+var
+  installPath: string;
+begin
+  // Checks .NET 8 desktop runtime presence by registry key
+  Result := RegQueryStringValue(HKLM64,
+    'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft .NET Runtime - 8 (x64)',
+    'InstallLocation', installPath);
+end;
+
+procedure InstallDotNet8IfNeeded();
+var
+  url, tempFile: string;
+begin
+  if not IsDotNet8Installed() then
+  begin
+    if MsgBox('.NET 8 Desktop Runtime is required for RTSPDeck. Do you want to download and install it now?',
+              mbConfirmation, MB_YESNO) = IDYES then
+    begin
+      url := 'https://download.visualstudio.microsoft.com/download/pr/d/d2c7ff59-f9a4-49c5-a55f-6d99e5d219b5/1c3774410a3c7f6e8d94b223b6ec230a/windowsdesktop-runtime-8.0.0-win-x64.exe';
+      tempFile := ExpandConstant('{tmp}\windowsdesktop-runtime-8.0.0-win-x64.exe');
+
+      if DownloadTemporaryFile(url, tempFile) then
+      begin
+        ShellExec('', tempFile, '/install /quiet /norestart', '', SW_SHOW, ewWaitUntilTerminated, True);
+      end
+      else
+      begin
+        MsgBox('Failed to download .NET 8. Please install it manually and rerun the installer.', mbCriticalError, MB_OK);
+        Abort;
+      end;
+    end
+    else
+    begin
+      MsgBox('Installation cancelled. RTSPDeck requires .NET 8 to run.', mbError, MB_OK);
+      Abort;
+    end;
+  end;
+end;
+
+function InitializeSetup(): Boolean;
+begin
+  InstallDotNet8IfNeeded();
+  Result := True;
+end;
